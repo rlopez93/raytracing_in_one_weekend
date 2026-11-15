@@ -3,10 +3,12 @@
 #include <cassert>
 #include <format>
 #include <ostream>
+
 class Vec3
 {
   public:
     double e[3];
+
     Vec3();
 
     Vec3(
@@ -107,7 +109,7 @@ inline auto cross(
         u.e[0] * v.e[1] - u.e[1] * v.e[0]};
 }
 
-inline auto unit_vector(Vec3 const& v)
+inline auto unit_vector(Vec3 const& v) -> Vec3
 {
-    v / v.length();
+    return v / v.length();
 }

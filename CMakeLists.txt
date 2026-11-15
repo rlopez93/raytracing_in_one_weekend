@@ -11,6 +11,9 @@ target_sources(raytracer PRIVATE
     src/main.cpp
     src/Vec3.cpp
     src/Color.cpp
+    src/Ray.cpp
+    src/Sphere.cpp
+    src/Hittable.cpp
 )
 
 target_include_directories(raytracer PRIVATE
