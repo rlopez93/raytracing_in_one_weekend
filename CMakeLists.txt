@@ -9,6 +9,8 @@ add_executable(raytracer)
 
 target_sources(raytracer PRIVATE
     src/main.cpp
+    src/Vec3.cpp
+    src/Color.cpp
 )
 
 target_include_directories(raytracer PRIVATE

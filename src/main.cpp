@@ -1,3 +1,6 @@
+#include "Color.hpp"
+#include "Vec3.hpp"
+#include <cstdio>
 #include <iostream>
 #include <print>
 #include <ranges>
@@ -17,11 +20,7 @@ int main(
             auto g = static_cast<double>(h) / (image_height - 1);
             auto b = 0.0;
 
-            auto ir = static_cast<int>(255.999 * r);
-            auto ig = static_cast<int>(255.999 * g);
-            auto ib = static_cast<int>(255.999 * b);
-
-            std::print("{} {} {}\n", ir, ig, ib);
+            write_color(std::cout, Color{r, g, b});
         }
     }
 }
