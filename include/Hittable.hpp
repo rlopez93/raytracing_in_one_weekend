@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Interval.hpp"
 #include "Ray.hpp"
 
 class HitRecord
@@ -22,7 +23,6 @@ class Hittable
 
     virtual auto
     hit(Ray const& ray,
-        double     t_min,
-        double     t_max,
+        Interval   ray_t,
         HitRecord& record) const -> bool = 0;
 };

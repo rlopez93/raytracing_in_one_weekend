@@ -13,8 +13,7 @@ Sphere::Sphere(
 
 auto Sphere::hit(
     Ray const& ray,
-    double     t_min,
-    double     t_max,
+    Interval   ray_t,
     HitRecord& record) const -> bool
 {
     auto const& C = center_;
@@ -37,9 +36,9 @@ auto Sphere::hit(
 
     auto root = (h - sqrtd) / a;
 
-    if (root <= t_min || t_max <= root) {
+    if (!ray_t.surrounds(root)) {
         root = (h + sqrtd) / a;
-        if (root <= t_min || t_max <= root) {
+        if (!ray_t.surrounds(root)) {
             return false;
         }
     }

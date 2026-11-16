@@ -14,6 +14,8 @@ target_sources(raytracer PRIVATE
     src/Ray.cpp
     src/Sphere.cpp
     src/Hittable.cpp
+    src/HittableList.cpp
+    src/Interval.cpp
 )
 
 target_include_directories(raytracer PRIVATE

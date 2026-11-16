@@ -1,9 +1,15 @@
 #include "Color.hpp"
+#include "Hittable.hpp"
+#include "HittableList.hpp"
 #include "Ray.hpp"
+#include "Sphere.hpp"
 #include "Vec3.hpp"
+
 #include <cmath>
 #include <cstdio>
 #include <iostream>
+#include <limits>
+#include <memory>
 #include <print>
 #include <ranges>
 
@@ -31,6 +37,21 @@ auto hit_sphere(
     }
 }
 
+auto ray_color(
+    Ray const&      ray,
+    Hittable const& world) -> Color
+{
+    HitRecord record;
+    if (world
+            .hit(ray, Interval(0.0, std::numeric_limits<double>::infinity()), record)) {
+        return 0.5 * (record.normal + Color{1.0, 1.0, 1.0});
+    }
+
+    auto unit_direction = unit_vector(ray.direction());
+    auto l              = 0.5 * (unit_direction.y() + 1.0);
+    return (1.0 - l) * Color{1.0, 1.0, 1.0} + l * Color{0.5, 0.7, 1.0};
+}
+
 auto ray_color(Ray const& ray) -> Color
 {
     auto t = hit_sphere({0.0, 0.0, -1.0}, 0.5, ray);
@@ -53,6 +74,11 @@ int main(
     auto image_width  = 400;
 
     auto image_height = std::max(1, static_cast<int>(image_width / aspect_ratio));
+
+    auto world = HittableList{};
+
+    world.add(std::make_shared<Sphere>(Point3{0.0, 0.0, -1.0}, 0.5));
+    world.add(std::make_shared<Sphere>(Point3{0.0, -100.5, -1.0}, 100.0));
 
     auto focal_length    = 1.0;
     auto viewport_height = 2.0;
@@ -79,7 +105,7 @@ int main(
             auto pixel_center = pixel00_loc + (w * pixel_delta_u) + (h * pixel_delta_v);
             auto ray_direction = pixel_center - camera_center;
             auto ray           = Ray{camera_center, ray_direction};
-            auto pixel_color   = ray_color(ray);
+            auto pixel_color   = ray_color(ray, world);
 
             write_color(std::cout, pixel_color);
         }

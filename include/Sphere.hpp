@@ -12,8 +12,7 @@ class Sphere : public Hittable
 
     auto
     hit(Ray const& ray,
-        double     t_min,
-        double     t_max,
+        Interval   ray_t,
         HitRecord& record) const -> bool override;
 
   private:
