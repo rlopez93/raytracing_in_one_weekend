@@ -18,6 +18,8 @@ class Interval
 
     auto surrounds(double x) const -> bool;
 
+    auto clamp(double x) const -> double;
+
     static Interval const Empty;
     static Interval const Universe;
 };

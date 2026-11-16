@@ -1,4 +1,5 @@
 #include "Color.hpp"
+#include "Interval.hpp"
 
 #include <cmath>
 #include <print>
@@ -11,9 +12,11 @@ void write_color(
     auto g = pixel_color.y();
     auto b = pixel_color.z();
 
-    auto rbyte = std::floor(255.999 * r);
-    auto gbyte = std::floor(255.999 * g);
-    auto bbyte = std::floor(255.999 * b);
+    static auto const intensity = Interval{0.000, 0.999};
+
+    auto rbyte = std::floor(256 * intensity.clamp(r));
+    auto gbyte = std::floor(256 * intensity.clamp(g));
+    auto bbyte = std::floor(256 * intensity.clamp(b));
 
     std::println(out, "{}", Color{rbyte, gbyte, bbyte});
 }

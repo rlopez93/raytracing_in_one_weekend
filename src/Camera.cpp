@@ -1,5 +1,9 @@
 #include "Camera.hpp"
+#include "Color.hpp"
 #include "Vec3.hpp"
+
+#include "random.hpp"
+using Random = ilqvya::Random;
 
 #include <iostream>
 #include <print>
@@ -14,12 +18,14 @@ auto Camera::render(Hittable const& world) -> void
     for (auto h : std::views::iota(0, image_height)) {
         for (auto w : std::views::iota(0, image_width)) {
 
-            auto pixel_center = pixel00_loc + (w * pixel_delta_u) + (h * pixel_delta_v);
-            auto ray_direction = pixel_center - center;
-            auto ray           = Ray{center, ray_direction};
-            auto pixel_color   = ray_color(ray, world);
+            auto pixel_color = Color{0.0, 0.0, 0.0};
 
-            write_color(std::cout, pixel_color);
+            for (auto sample : std::views::iota(0, samples_per_pixel)) {
+                auto ray = get_ray(w, h);
+                pixel_color += ray_color(ray, world);
+            }
+
+            write_color(std::cout, pixel_color * pixel_samples_scale);
         }
     }
 }
@@ -27,6 +33,8 @@ auto Camera::render(Hittable const& world) -> void
 auto Camera::initialize() -> void
 {
     image_height = std::max(1, static_cast<int>(image_width / aspect_ratio));
+
+    pixel_samples_scale = 1.0 / samples_per_pixel;
 
     center = Point3{0.0, 0.0, 0.0};
 
@@ -60,4 +68,18 @@ auto Camera::ray_color(
     auto unit_direction = unit_vector(ray.direction());
     auto t              = 0.5 * (unit_direction.y() + 1.0);
     return (1.0 - t) * Color{1.0, 1.0, 1.0} + t * Color{0.5, 0.7, 1.0};
+}
+auto Camera::get_ray(
+    int i,
+    int j) const -> Ray
+{
+    auto offset       = sample_square();
+    auto pixel_sample = pixel00_loc + ((i + offset.x()) * pixel_delta_u)
+                      + ((j + offset.y()) * pixel_delta_v);
+
+    return {center, pixel_sample - center};
+}
+auto Camera::sample_square() const -> Color
+{
+    return {Random::get(-0.5, 0.5), Random::get(-0.5, 0.5), 0.0};
 }
