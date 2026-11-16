@@ -16,6 +16,7 @@ target_sources(raytracer PRIVATE
     src/Hittable.cpp
     src/HittableList.cpp
     src/Interval.cpp
+    src/Camera.cpp
 )
 
 target_include_directories(raytracer PRIVATE
