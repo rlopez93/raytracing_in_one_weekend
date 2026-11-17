@@ -1,4 +1,5 @@
 #include "Vec3.hpp"
+#include "random.hpp"
 #include <cmath>
 
 Vec3::Vec3()
@@ -77,4 +78,15 @@ auto Vec3::length() const -> double
 auto Vec3::length_squared() const -> double
 {
     return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
+}
+
+auto Vec3::random() -> Vec3
+{
+    return {Random::get(0.0, 1.0), Random::get(0.0, 1.0), Random::get(0.0, 1.0)};
+}
+auto Vec3::random(
+    double min,
+    double max) -> Vec3
+{
+    return {Random::get(min, max), Random::get(min, max), Random::get(min, max)};
 }

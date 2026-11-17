@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cassert>
+#include <cmath>
 #include <format>
 #include <ostream>
 
@@ -30,6 +31,11 @@ class Vec3
 
     auto length() const -> double;
     auto length_squared() const -> double;
+
+    static auto random() -> Vec3;
+    static auto random(
+        double min,
+        double max) -> Vec3;
 };
 
 using Point3 = Vec3;
@@ -112,4 +118,32 @@ inline auto cross(
 inline auto unit_vector(Vec3 const& v) -> Vec3
 {
     return v / v.length();
+}
+
+inline auto random_unit_vector() -> Vec3
+{
+    while (true) {
+        auto p     = Vec3::random(-1.0, 1.0);
+        auto lensq = p.length_squared();
+        if (std::isnormal(lensq) && lensq <= 1) {
+            return p / std::sqrt(lensq);
+        }
+    }
+}
+
+inline auto random_on_hemisphere(Vec3 const& normal) -> Vec3
+{
+    auto on_unit_sphere = random_unit_vector();
+    if (dot(on_unit_sphere, normal) > 0.0) {
+        return on_unit_sphere;
+    } else {
+        return -on_unit_sphere;
+    }
+}
+
+inline auto reflect(
+    Vec3 const& v,
+    Vec3 const& n) -> Vec3
+{
+    return v - 2 * dot(v, n) * n;
 }

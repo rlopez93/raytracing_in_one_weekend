@@ -1,13 +1,16 @@
 #include "Sphere.hpp"
 #include <cmath>
+#include <memory>
 
 Sphere::Sphere(
-    Point3 const& center,
-    double        radius)
+    Point3 const&             center,
+    double                    radius,
+    std::shared_ptr<Material> material)
     : center_{center},
       radius_{std::fmax(
           0,
-          radius)}
+          radius)},
+      material_(material)
 {
 }
 
@@ -47,6 +50,7 @@ auto Sphere::hit(
     record.p            = ray.at(record.t);
     auto outward_normal = (record.p - center_) / radius_;
     record.set_face_normal(ray, outward_normal);
+    record.material = material_;
 
     return true;
 }

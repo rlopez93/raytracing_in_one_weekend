@@ -2,13 +2,15 @@
 
 #include "Hittable.hpp"
 #include "Vec3.hpp"
+#include <memory>
 
 class Sphere : public Hittable
 {
   public:
     Sphere(
-        Point3 const& center,
-        double        radius);
+        Point3 const&             center,
+        double                    radius,
+        std::shared_ptr<Material> material);
 
     auto
     hit(Ray const& ray,
@@ -16,6 +18,7 @@ class Sphere : public Hittable
         HitRecord& record) const -> bool override;
 
   private:
-    Point3 center_;
-    double radius_;
+    Point3                    center_;
+    double                    radius_;
+    std::shared_ptr<Material> material_;
 };

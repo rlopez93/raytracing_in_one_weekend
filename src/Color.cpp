@@ -8,9 +8,9 @@ void write_color(
     std::ostream& out,
     Color const&  pixel_color)
 {
-    auto r = pixel_color.x();
-    auto g = pixel_color.y();
-    auto b = pixel_color.z();
+    auto r = linear_to_gamma(pixel_color.x());
+    auto g = linear_to_gamma(pixel_color.y());
+    auto b = linear_to_gamma(pixel_color.z());
 
     static auto const intensity = Interval{0.000, 0.999};
 

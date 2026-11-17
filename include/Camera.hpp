@@ -10,6 +10,7 @@ class Camera
     double aspect_ratio{1.0};
     int    image_width{100};
     int    samples_per_pixel{10};
+    int    max_depth{10};
 
     auto render(Hittable const& world) -> void;
 
@@ -25,6 +26,7 @@ class Camera
 
     auto ray_color(
         Ray const&      ray,
+        int             depth,
         Hittable const& world) const -> Color;
 
     auto get_ray(

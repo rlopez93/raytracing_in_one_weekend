@@ -4603,4 +4603,6 @@ using Random = random;
 /// Backward compatibility namespace alias
 namespace effolkronium = ilqvya;
 
+using Random = ilqvya::Random;
+
 #endif // #ifndef ILQVYA_RANDOM_HPP

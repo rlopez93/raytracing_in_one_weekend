@@ -1,9 +1,9 @@
 #include "Camera.hpp"
 #include "Color.hpp"
+#include "Material.hpp"
 #include "Vec3.hpp"
 
 #include "random.hpp"
-using Random = ilqvya::Random;
 
 #include <iostream>
 #include <print>
@@ -22,7 +22,7 @@ auto Camera::render(Hittable const& world) -> void
 
             for (auto sample : std::views::iota(0, samples_per_pixel)) {
                 auto ray = get_ray(w, h);
-                pixel_color += ray_color(ray, world);
+                pixel_color += ray_color(ray, max_depth, world);
             }
 
             write_color(std::cout, pixel_color * pixel_samples_scale);
@@ -56,13 +56,24 @@ auto Camera::initialize() -> void
 
 auto Camera::ray_color(
     Ray const&      ray,
+    int             depth,
     Hittable const& world) const -> Color
 {
+    if (depth <= 0) {
+        return {0.0, 0.0, 0.0};
+    }
     constexpr auto infinity = std::numeric_limits<double>::infinity();
     auto           record   = HitRecord{};
 
-    if (world.hit(ray, Interval{0.0, infinity}, record)) {
-        return 0.5 * (record.normal + Color{1.0, 1.0, 1.0});
+    if (world.hit(ray, Interval{0.001, infinity}, record)) {
+        auto scattered   = Ray{};
+        auto attenuation = Color{};
+
+        if (record.material->scatter(ray, record, attenuation, scattered)) {
+            return attenuation * ray_color(scattered, depth - 1, world);
+        }
+
+        return {0.0, 0.0, 0.0};
     }
 
     auto unit_direction = unit_vector(ray.direction());

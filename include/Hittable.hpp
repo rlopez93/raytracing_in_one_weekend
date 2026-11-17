@@ -2,14 +2,18 @@
 
 #include "Interval.hpp"
 #include "Ray.hpp"
+#include <memory>
+
+class Material;
 
 class HitRecord
 {
   public:
-    Point3 p;
-    Vec3   normal;
-    double t;
-    bool   front_face;
+    Point3                    p;
+    Vec3                      normal;
+    std::shared_ptr<Material> material;
+    double                    t;
+    bool                      front_face;
 
     auto set_face_normal(
         Ray const&  ray,
