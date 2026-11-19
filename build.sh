@@ -1,1 +1,1 @@
-cmake --build build --parallel 12
+cmake --build --preset release

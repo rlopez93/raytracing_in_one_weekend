@@ -1,5 +1,6 @@
 #pragma once
 
+#include "random.hpp"
 #include <cassert>
 #include <cmath>
 #include <format>
@@ -131,6 +132,16 @@ inline auto random_unit_vector() -> Vec3
     }
 }
 
+inline auto random_in_unit_disk() -> Vec3
+{
+    while (true) {
+        auto p = Vec3{Random::get(-1.0, 1.0), Random::get(-1.0, 1.0), 0.0};
+        if (p.length_squared() < 1.0) {
+            return p;
+        }
+    }
+}
+
 inline auto random_on_hemisphere(Vec3 const& normal) -> Vec3
 {
     auto on_unit_sphere = random_unit_vector();
@@ -146,4 +157,15 @@ inline auto reflect(
     Vec3 const& n) -> Vec3
 {
     return v - 2 * dot(v, n) * n;
+}
+
+inline auto refract(
+    Vec3 const& uv,
+    Vec3 const& n,
+    double      etai_over_etat) -> Vec3
+{
+    auto cos_theta      = std::fmin(dot(-uv, n), 1.0);
+    auto r_out_perp     = etai_over_etat * (uv + cos_theta * n);
+    auto r_out_parallel = -std::sqrt(std::fabs(1.0 - r_out_perp.length_squared())) * n;
+    return r_out_perp + r_out_parallel;
 }

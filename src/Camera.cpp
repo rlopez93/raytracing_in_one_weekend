@@ -6,6 +6,7 @@
 #include "random.hpp"
 
 #include <iostream>
+#include <numbers>
 #include <print>
 #include <ranges>
 
@@ -32,26 +33,35 @@ auto Camera::render(Hittable const& world) -> void
 
 auto Camera::initialize() -> void
 {
-    image_height = std::max(1, static_cast<int>(image_width / aspect_ratio));
-
+    image_height        = std::max(1, static_cast<int>(image_width / aspect_ratio));
     pixel_samples_scale = 1.0 / samples_per_pixel;
+    center              = lookfrom;
 
-    center = Point3{0.0, 0.0, 0.0};
-
-    auto focal_length    = 1.0;
-    auto viewport_height = 2.0;
+    auto theta           = std::numbers::pi * vfov / 180.0;
+    auto h               = std::tan(theta / 2.0);
+    auto viewport_height = 2.0 * h * focus_distance;
     auto viewport_width =
         viewport_height * (static_cast<double>(image_width) / image_height);
-    auto viewport_u = Vec3{viewport_width, 0.0, 0.0};
-    auto viewport_v = Vec3{0.0, -viewport_height, 0.0};
+
+    w = unit_vector(lookfrom - lookat);
+    u = unit_vector(cross(vup, w));
+    v = cross(w, u);
+
+    auto viewport_u = viewport_width * u;
+    auto viewport_v = viewport_height * -v;
 
     pixel_delta_u = viewport_u / image_width;
     pixel_delta_v = viewport_v / image_height;
 
     auto viewport_upper_left =
-        center - Vec3{0.0, 0.0, focal_length} - viewport_u / 2.0 - viewport_v / 2.0;
+        center - (focus_distance * w) - viewport_u / 2.0 - viewport_v / 2.0;
 
     pixel00_loc = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
+
+    auto defocus_radius =
+        focus_distance * std::tan((defocus_angle / 2.0) * std::numbers::pi / 180.0);
+    defocus_disk_u = u * defocus_radius;
+    defocus_disk_v = v * defocus_radius;
 }
 
 auto Camera::ray_color(
@@ -88,9 +98,17 @@ auto Camera::get_ray(
     auto pixel_sample = pixel00_loc + ((i + offset.x()) * pixel_delta_u)
                       + ((j + offset.y()) * pixel_delta_v);
 
-    return {center, pixel_sample - center};
+    auto ray_origin    = (defocus_angle <= 0) ? center : defocus_disk_sample();
+    auto ray_direction = pixel_sample - ray_origin;
+
+    return {ray_origin, ray_direction};
 }
 auto Camera::sample_square() const -> Color
 {
     return {Random::get(-0.5, 0.5), Random::get(-0.5, 0.5), 0.0};
+}
+auto Camera::defocus_disk_sample() const -> Point3
+{
+    auto p = random_in_unit_disk();
+    return center + (p[0] * defocus_disk_u) + (p[1] * defocus_disk_v);
 }
