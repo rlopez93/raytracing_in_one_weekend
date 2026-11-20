@@ -7,11 +7,13 @@
 #include "random.hpp"
 #include <memory>
 #include <ranges>
+#include <tracy/Tracy.hpp>
 
 int main(
     int   argc,
     char* argv[])
 {
+    ZoneScoped;
     auto world = HittableList{};
 
     auto ground_material = std::make_shared<Lambertian>(Color{0.5, 0.5, 0.5});

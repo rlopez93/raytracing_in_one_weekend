@@ -24,6 +24,18 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release"
             }
+        },
+        {
+            "name": "tracy",
+            "displayName": "Tracy profiling (Release + TRACY_ENABLE)",
+            "inherits": "base",
+            "binaryDir": "${sourceDir}/build/tracy",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_CXX_FLAGS": "-g -fno-omit-frame-pointer",
+                "CMAKE_EXE_LINKER_FLAGS": "-rdynamic",
+                "TRACY_ENABLE": "ON"
+            }
         }
     ],
     "buildPresets": [
@@ -34,6 +46,10 @@
         {
             "name": "release",
             "configurePreset": "release"
+        },
+        {
+            "name": "tracy",
+            "configurePreset": "tracy"
         }
     ]
 }
